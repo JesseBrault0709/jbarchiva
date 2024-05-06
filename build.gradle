@@ -1,0 +1,34 @@
+plugins {
+    id 'groovy-gradle-plugin'
+    id 'maven-publish'
+}
+
+group = 'com.jessebrault.jbarchiva'
+version = '0.2.1'
+
+gradlePlugin {
+    plugins {
+        create('jbArchiva') {
+            id = 'com.jessebrault.jbarchiva'
+            implementationClass = 'com.jessebrault.jbarchiva.JbArchivaPlugin'
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name 'jbArchiva'
+
+            def internalUri = uri('https://archiva.jessebrault.com/repository/internal')
+            def snapshotsUri = uri('https://archiva.jessebrault.com/repository/snapshots')
+
+            url version.endsWith('SNAPSHOT') ? snapshotsUri : internalUri
+
+            credentials {
+                username System.getenv('JBARCHIVA_USERNAME')
+                password System.getenv('JBARCHIVA_PASSWORD')
+            }
+        }
+    }
+}
